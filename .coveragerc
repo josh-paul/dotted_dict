@@ -1,0 +1,4 @@
+[run]
+branch = True
+source = dotted_dict
+omit = tests/*
