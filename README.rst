@@ -1,6 +1,18 @@
 dotted_dict
 =============
 
+.. image:: https://travis-ci.org/josh-paul/dotted_dict.svg?branch=master
+    :target: https://travis-ci.org/josh-paul/dotted_dict
+    :alt: Travis CI Build
+
+.. image:: http://codecov.io/github/josh-paul/dotted_dict/coverage.svg?branch=master
+    :target: http://codecov.io/github/josh-paul/dotted_dict?branch=master
+    :alt: Coverage
+
+.. image:: https://codeclimate.com/github/josh-paul/dotted_dict/badges/gpa.svg
+   :target: https://codeclimate.com/github/josh-paul/dotted_dict
+   :alt: Code Climate
+
 A light weight extension of the default python dict object. This allows for the use of key names as 
 object attributes. 
 
