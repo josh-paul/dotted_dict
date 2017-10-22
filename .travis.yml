@@ -17,9 +17,18 @@ matrix:
     env: TOXENV=py35
   - python: 3.6
     env: TOXENV=py36
+env:
+  global:
+    - CC_TEST_REPORTER_ID=0140e9ddb7a4b9bd315e93d1c4a34ca9772cc3b96b09c5a0c638a79e65dd986e
 install:
 - pip install tox codecov
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 script:
 - tox -e $TOXENV
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 after_success:
 - codecov
