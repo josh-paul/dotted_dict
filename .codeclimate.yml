@@ -1,0 +1,21 @@
+---
+engines:
+  pep8:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - python
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+  radon:
+    enabled: true
+ratings:
+  paths:
+  - "dotted_dict/*"
+exclude_paths:
+- dist/
+- tests/

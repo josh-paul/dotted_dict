@@ -10,21 +10,12 @@ class DottedDict(dict):
         super(DottedDict, self).__init__(*args, **kwargs)
         for arg in args:
             if isinstance(arg, dict):
-                for key, value in arg.items():
-                    if isinstance(value, dict):
-                        value = DottedDict(**value)
-                    self[key] = value
+                self._parse_input(arg)
 
         if kwargs:
-            for key, value in kwargs.items():
-                if isinstance(value, dict):
-                    value = DottedDict(**value)
-                self[key] = value
+            self._parse_input(kwargs)
 
-        # Catch for case of importing values in the .items() format
-        if self.items() and not self.__dict__.items():
-            for key, value in self.items():
-                self.__setitem__(key, value)
+        self._handle_items_format()
 
     def __getattr__(self, attr):
         try:
@@ -49,6 +40,14 @@ class DottedDict(dict):
         super(DottedDict, self).__delitem__(key)
         del self.__dict__[key]
 
+    def _handle_items_format(self):
+        '''
+        Handle input of items format (list of tuples).
+        '''
+        if self.items() and not self.__dict__.items():
+            for key, value in self.items():
+                self.__setitem__(key, value)
+
     def _is_valid_identifier_(self, identifier):
         '''
         Test the key name for valid identifier status as considered by the python lexer. Also
@@ -58,3 +57,12 @@ class DottedDict(dict):
         if re.match('[a-zA-Z_][a-zA-Z0-9_]*$', identifier) and not keyword.iskeyword(identifier):
             return True
         raise ValueError('Key name is not a valid identifier or is reserved keyword.')
+
+    def _parse_input(self, input_item):
+        '''
+        Parse the input item if dict into the dotted_dict constructor.
+        '''
+        for key, value in input_item.items():
+            if isinstance(value, dict):
+                value = DottedDict(**value)
+            self[key] = value

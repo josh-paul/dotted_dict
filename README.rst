@@ -9,9 +9,9 @@ dotted_dict
     :target: http://codecov.io/github/josh-paul/dotted_dict?branch=master
     :alt: Coverage
 
-.. image:: https://codeclimate.com/github/josh-paul/dotted_dict/badges/gpa.svg
-   :target: https://codeclimate.com/github/josh-paul/dotted_dict
-   :alt: Code Climate
+.. image:: https://api.codeclimate.com/v1/badges/a5bdee8792e6a6379df1/maintainability
+   :target: https://codeclimate.com/github/josh-paul/dotted_dict/maintainability
+   :alt: Code Climate Maintainability
 
 A light weight extension of the default python dict object. This allows for the use of key names as 
 object attributes. 
