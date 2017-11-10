@@ -28,7 +28,7 @@ setup(
     ],
 
     keywords='dotted dict dotted_dict',
-    packages=find_packages(exclude=['contrib', 'docs', 'test*']),
+    packages=find_packages(exclude=['contrib', 'docs', , 'examples', 'test*']),
     install_requires=[],
     extras_require={},
     package_data={},
