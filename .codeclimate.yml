@@ -17,5 +17,8 @@ ratings:
   paths:
   - "dotted_dict/*"
 exclude_paths:
+- .cache/
+- .tox/
+- build/
 - dist/
 - tests/
