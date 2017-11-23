@@ -25,8 +25,8 @@ class DottedDict(dict):
             raise AttributeError(attr)
 
     def __setattr__(self, key, value):
-        if self._is_valid_identifier_(key):
-            self.__setitem__(key, value)
+        # No need to run _is_valid_identifier since a syntax error is raised if invalid attr name
+        self.__setitem__(key, value)
 
     def __setitem__(self, key, value):
         if self._is_valid_identifier_(key):
