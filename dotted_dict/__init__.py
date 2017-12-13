@@ -1,5 +1,6 @@
 import keyword
 import re
+import string
 
 
 class DottedDict(dict):
@@ -7,15 +8,15 @@ class DottedDict(dict):
     Override for the dict object to allow referencing of keys as attributes, i.e. dict.key
     '''
     def __init__(self, *args, **kwargs):
-        super(DottedDict, self).__init__(*args, **kwargs)
         for arg in args:
             if isinstance(arg, dict):
-                self._parse_input(arg)
+                self._parse_input_(arg)
+            if isinstance(arg, list):
+                for k, v in arg:
+                    self.__setitem__(k, v)
 
         if kwargs:
-            self._parse_input(kwargs)
-
-        self._handle_items_format()
+            self._parse_input_(kwargs)
 
     def __getattr__(self, attr):
         try:
@@ -29,9 +30,15 @@ class DottedDict(dict):
         self.__setitem__(key, value)
 
     def __setitem__(self, key, value):
-        if self._is_valid_identifier_(key):
-            super(DottedDict, self).__setitem__(key, value)
-            self.__dict__.update({key: value})
+        try:
+            self._is_valid_identifier_(key)
+        except ValueError:
+            if not keyword.iskeyword(key):
+                key = self._make_safe_(key)
+            else:
+                raise ValueError('Key "{0}" is a reserved keyword.'.format(key))
+        super(DottedDict, self).__setitem__(key, value)
+        self.__dict__.update({key: value})
 
     def __delattr__(self, item):
         self.__delitem__(item)
@@ -40,29 +47,46 @@ class DottedDict(dict):
         super(DottedDict, self).__delitem__(key)
         del self.__dict__[key]
 
-    def _handle_items_format(self):
-        '''
-        Handle input of items format (list of tuples).
-        '''
-        if self.items() and not self.__dict__.items():
-            for key, value in self.items():
-                self.__setitem__(key, value)
-
     def _is_valid_identifier_(self, identifier):
         '''
         Test the key name for valid identifier status as considered by the python lexer. Also
         check that the key name is not a python keyword.
         https://stackoverflow.com/questions/12700893/how-to-check-if-a-string-is-a-valid-python-identifier-including-keyword-check
         '''
-        if re.match('[a-zA-Z_][a-zA-Z0-9_]*$', identifier) and not keyword.iskeyword(identifier):
-            return True
-        raise ValueError('Key name is not a valid identifier or is reserved keyword.')
+        if re.match('[a-zA-Z_][a-zA-Z0-9_]*$', str(identifier)):
+            if not keyword.iskeyword(identifier):
+                return True
+        raise ValueError('Key "{0}" is not a valid identifier.'.format(identifier))
 
-    def _parse_input(self, input_item):
+    def _parse_input_(self, input_item):
         '''
         Parse the input item if dict into the dotted_dict constructor.
         '''
         for key, value in input_item.items():
             if isinstance(value, dict):
-                value = DottedDict(**value)
-            self[key] = value
+                value = DottedDict(**{str(k): v for k, v in value.items()})
+            self.__setitem__(key, value)
+
+    def _make_safe_(self, key):
+        '''
+        Replace the space characters on the key with _ to make valid attrs.
+        '''
+        key = str(key)
+        allowed = string.ascii_letters + string.digits + '_'
+        # Replace spaces with _
+        if ' ' in key:
+            key = key.replace(' ', '_')
+        # Find invalid characters for use of key as attr
+        diff = set(key).difference(set(allowed))
+        # Remove invalid characters
+        if diff:
+            for char in diff:
+                key = key.replace(char, '')
+        # Add _ if key begins with int
+        try:
+            int(key[0])
+        except ValueError:
+            pass
+        else:
+            key = '_{0}'.format(key)
+        return key

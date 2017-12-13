@@ -63,11 +63,11 @@ class dotteddictTests(unittest.TestCase):
         self.assertTrue(dotted.foo is value)
 
     def test_not_valid_identifier(self):
-        # Contains invalid character
-        with self.assertRaises(ValueError):
-            DottedDict({'foo-bar': 1})
-        with self.assertRaises(ValueError):
-            DottedDict({'.foo': 1})
+        dotted = DottedDict({'foo-bar': 1, '.foo': 1, 'foo baz': 1, 1: 2})
+        self.assertTrue(dotted.foobar, 1)
+        self.assertTrue(dotted.foo, 1)
+        self.assertTrue(dotted.foo_baz, 1)
+        self.assertTrue(dotted._1, 2)
         # Reserved keyword
         with self.assertRaises(ValueError):
             DottedDict({'lambda': 1})
