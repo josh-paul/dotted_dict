@@ -8,7 +8,7 @@ with open('README.rst') as f:
 
 setup(
     name='dotted_dict',
-    version='1.0.2',
+    version='1.0.3',
     description=('dict object with support for addressing keys in dot notation.'),
     long_description=desc,
     url='https://github.com/josh-paul/dotted_dict',

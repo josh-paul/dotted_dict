@@ -65,6 +65,8 @@ class DottedDict(dict):
         for key, value in input_item.items():
             if isinstance(value, dict):
                 value = DottedDict(**{str(k): v for k, v in value.items()})
+            if key in self.__dict__.keys():
+                print('Duplicate key {0}'.format(key))
             self.__setitem__(key, value)
 
     def _make_safe_(self, key):
@@ -78,10 +80,10 @@ class DottedDict(dict):
             key = key.replace(' ', '_')
         # Find invalid characters for use of key as attr
         diff = set(key).difference(set(allowed))
-        # Remove invalid characters
+        # Replace invalid characters with _
         if diff:
             for char in diff:
-                key = key.replace(char, '')
+                key = key.replace(char, '_')
         # Add _ if key begins with int
         try:
             int(key[0])
