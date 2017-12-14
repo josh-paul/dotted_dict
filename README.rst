@@ -31,14 +31,14 @@ Simple usage
     In [5]: example.bar = 2
 
     In [6]: example
-    Out[6]: {'bar': 2, 'foo': 1}
+    Out[6]: DottedDict({'bar': 2, 'foo': 1})
 
     In [7]: del example['foo']
 
     In [8]: del example.bar
 
     In [9]: example
-    Out[9]: {}
+    Out[9]: DottedDict({})
 
 
 Also allows passing in of values in same manner as normal dict objects.
@@ -47,7 +47,7 @@ Also allows passing in of values in same manner as normal dict objects.
     In [10]: example = DottedDict({'foo': 1, 'bar': 2})
 
     In [11]: example
-    Out[11]: {'bar': 2, 'foo': 1}
+    Out[11]: DottedDict({'bar': 2, 'foo': 1})
 
 Issues with invalid characters. A valid key name in the scope of this library must conform to the
 following regex :code:`[a-zA-Z_][a-zA-Z0-9_]*$`. In the case where your key name does not conform,
@@ -56,7 +56,7 @@ _. In the case of the key beginning with an int, a leading _ is added.
 ::
 
     In [12]: DottedDict({'My fun key': 1, 'John\'s': 1, 'Mr. Man': 1})
-    Out[12]: {'John_s': 1, 'Mr__Man': 1, 'My_fun_key': 1}
+    Out[12]: DottedDict({'John_s': 1, 'Mr__Man': 1, 'My_fun_key': 1})
 
     In [13]: DottedDict({1: 2})
-    Out[13]: {'_1': 2}
+    Out[13]: DottedDict({'_1': 2})
