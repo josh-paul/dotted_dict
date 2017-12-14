@@ -64,8 +64,8 @@ class dotteddictTests(unittest.TestCase):
 
     def test_not_valid_identifier(self):
         dotted = DottedDict({'foo-bar': 1, '.foo': 1, 'foo baz': 1, 1: 2})
-        self.assertTrue(dotted.foobar, 1)
-        self.assertTrue(dotted.foo, 1)
+        self.assertTrue(dotted.foo_bar, 1)
+        self.assertTrue(dotted._foo, 1)
         self.assertTrue(dotted.foo_baz, 1)
         self.assertTrue(dotted._1, 2)
         # Reserved keyword
