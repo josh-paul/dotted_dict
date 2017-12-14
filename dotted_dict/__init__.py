@@ -129,5 +129,7 @@ class DottedDict(dict):
                 for item in value:
                     if hasattr(item, 'to_dict'):
                         _list.append(item.to_dict())
+                    else:
+                        _list.append(item)
                 out[key] = _list
         return out
