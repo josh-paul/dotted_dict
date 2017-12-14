@@ -29,6 +29,11 @@ class dotteddictTests(unittest.TestCase):
         dotted = DottedDict()
         self.assertTrue(isinstance(dotted, DottedDict))
 
+    def test_copy(self):
+        my_dict = DottedDict({'my key two': {'b': 'c', 1: 2}})
+        dotted = my_dict.copy()
+        self.assertEquals(my_dict, dotted)
+
     def test_delete(self):
         dotted = DottedDict({'foo': 1})
         del dotted.foo
@@ -71,6 +76,10 @@ class dotteddictTests(unittest.TestCase):
         # Reserved keyword
         with self.assertRaises(ValueError):
             DottedDict({'lambda': 1})
+
+    def test_repr(self):
+        dotted = DottedDict({'foo-bar': 1, '.foo': 1, 'foo baz': 1, 1: 2})
+        assert eval(repr(dotted)) == dotted
 
     def test_set_via_attrib(self):
         value = 42
