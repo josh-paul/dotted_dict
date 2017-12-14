@@ -96,3 +96,10 @@ class dotteddictTests(unittest.TestCase):
         self.assertEqual(dotted[key], value)
         self.assertEqual(dotted.x, value)
         self.assertEqual(dotted.x, dotted[key])
+
+    def test_to_dict(self):
+        dotted = DottedDict({'my key two': {'b': 'c', 1: 2}})
+        my_dict = dotted.to_dict()
+        self.assertEquals(dotted, my_dict)
+        self.assertEqual(type(dotted), DottedDict)
+        self.assertEqual(type(my_dict), dict)

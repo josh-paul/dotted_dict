@@ -105,3 +105,15 @@ class DottedDict(dict):
         Ensure copy object is DottedDict, not dict.
         '''
         return type(self)(self)
+
+    def to_dict(self):
+        '''
+        Recursive conversion back to dict.
+        '''
+        out = dict(self)
+        for k, v in out.items():
+            if v is self:
+                out[k] = out
+            elif hasattr(v, 'to_dict'):
+                out[k] = v.to_dict()
+        return out
