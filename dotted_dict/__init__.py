@@ -18,12 +18,28 @@ class DottedDict(dict):
         if kwargs:
             self._parse_input_(kwargs)
 
+    def __delattr__(self, item):
+        self.__delitem__(item)
+
+    def __delitem__(self, key):
+        super(DottedDict, self).__delitem__(key)
+        del self.__dict__[key]
+
     def __getattr__(self, attr):
         try:
             return self.__dict__[attr]
         # Do this to match python default behavior
         except KeyError:
             raise AttributeError(attr)
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        '''
+        Wrap the returned dict in DottedDict() on output.
+        '''
+        return '{0}({1})'.format(type(self).__name__, super(DottedDict, self).__repr__())
 
     def __setattr__(self, key, value):
         # No need to run _is_valid_identifier since a syntax error is raised if invalid attr name
@@ -40,13 +56,6 @@ class DottedDict(dict):
         super(DottedDict, self).__setitem__(key, value)
         self.__dict__.update({key: value})
 
-    def __delattr__(self, item):
-        self.__delitem__(item)
-
-    def __delitem__(self, key):
-        super(DottedDict, self).__delitem__(key)
-        del self.__dict__[key]
-
     def _is_valid_identifier_(self, identifier):
         '''
         Test the key name for valid identifier status as considered by the python lexer. Also
@@ -57,17 +66,6 @@ class DottedDict(dict):
             if not keyword.iskeyword(identifier):
                 return True
         raise ValueError('Key "{0}" is not a valid identifier.'.format(identifier))
-
-    def _parse_input_(self, input_item):
-        '''
-        Parse the input item if dict into the dotted_dict constructor.
-        '''
-        for key, value in input_item.items():
-            if isinstance(value, dict):
-                value = DottedDict(**{str(k): v for k, v in value.items()})
-            if key in self.__dict__.keys():
-                print('Duplicate key {0}'.format(key))
-            self.__setitem__(key, value)
 
     def _make_safe_(self, key):
         '''
@@ -92,3 +90,18 @@ class DottedDict(dict):
         else:
             key = '_{0}'.format(key)
         return key
+
+    def _parse_input_(self, input_item):
+        '''
+        Parse the input item if dict into the dotted_dict constructor.
+        '''
+        for key, value in input_item.items():
+            if isinstance(value, dict):
+                value = DottedDict(**{str(k): v for k, v in value.items()})
+            self.__setitem__(key, value)
+
+    def copy(self):
+        '''
+        Ensure copy object is DottedDict, not dict.
+        '''
+        return type(self)(self)
