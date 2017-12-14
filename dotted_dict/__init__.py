@@ -98,6 +98,14 @@ class DottedDict(dict):
         for key, value in input_item.items():
             if isinstance(value, dict):
                 value = DottedDict(**{str(k): v for k, v in value.items()})
+            if isinstance(value, list):
+                _list = []
+                for item in value:
+                    if isinstance(item, dict):
+                        _list.append(DottedDict(item))
+                    else:
+                        _list.append(item)
+                value = _list
             self.__setitem__(key, value)
 
     def copy(self):
@@ -111,9 +119,15 @@ class DottedDict(dict):
         Recursive conversion back to dict.
         '''
         out = dict(self)
-        for k, v in out.items():
-            if v is self:
-                out[k] = out
-            elif hasattr(v, 'to_dict'):
-                out[k] = v.to_dict()
+        for key, value in out.items():
+            if value is self:
+                out[key] = out
+            elif hasattr(value, 'to_dict'):
+                out[key] = value.to_dict()
+            elif isinstance(value, list):
+                _list = []
+                for item in value:
+                    if hasattr(item, 'to_dict'):
+                        _list.append(item.to_dict())
+                out[key] = _list
         return out

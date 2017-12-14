@@ -14,7 +14,7 @@ dotted_dict
    :alt: Code Climate Maintainability
 
 A light weight extension of the default python dict object. This allows for the use of key names as 
-object attributes. 
+object attributes.
 
 Simple usage
 ::
