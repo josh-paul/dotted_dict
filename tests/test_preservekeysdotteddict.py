@@ -1,6 +1,6 @@
 import unittest
 
-from dotted_dict import PreserveKeysDottedDict
+from dotted_dict import DottedDict, PreserveKeysDottedDict
 
 
 class dotteddictTests(unittest.TestCase):
@@ -98,7 +98,9 @@ class dotteddictTests(unittest.TestCase):
         self.assertEqual(dotted.x, dotted[key])
 
     def test_to_dict(self):
-        dotted = PreserveKeysDottedDict(PreserveKeysDottedDict({'a': 'b', 'c': {'d': 'e'}, 'f': [{'g': 'h'}, 1]}))
+        dotted = PreserveKeysDottedDict(
+            PreserveKeysDottedDict({'a': 'b', 'c': {'d': 'e'}, 'f': [{'g': 'h'}, 1]})
+        )
         my_dict = dotted.to_dict()
         self.assertEquals(dotted, my_dict)
         self.assertEqual(type(dotted), DottedDict)
