@@ -133,7 +133,8 @@ class DottedDict(dict):
                         _list.append(item)
                 out[key] = _list
         return out
-    
+
+
 class PreserveKeysDottedDict(DottedDict):
     def _is_valid_identifier_(self, identifier):
         return True
