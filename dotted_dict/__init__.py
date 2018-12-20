@@ -22,7 +22,7 @@ class DottedDict(dict):
         self.__delitem__(item)
 
     def __delitem__(self, key):
-        super(DottedDict, self).__delitem__(key)
+        super(self.__class__, self).__delitem__(key)
         del self.__dict__[key]
 
     def __getattr__(self, attr):
@@ -39,7 +39,7 @@ class DottedDict(dict):
         '''
         Wrap the returned dict in DottedDict() on output.
         '''
-        return '{0}({1})'.format(type(self).__name__, super(DottedDict, self).__repr__())
+        return '{0}({1})'.format(type(self).__name__, super(self.__class__, self).__repr__())
 
     def __setattr__(self, key, value):
         # No need to run _is_valid_identifier since a syntax error is raised if invalid attr name
@@ -53,7 +53,7 @@ class DottedDict(dict):
                 key = self._make_safe_(key)
             else:
                 raise ValueError('Key "{0}" is a reserved keyword.'.format(key))
-        super(DottedDict, self).__setitem__(key, value)
+        super(self.__class__, self).__setitem__(key, value)
         self.__dict__.update({key: value})
 
     def _is_valid_identifier_(self, identifier):
@@ -97,12 +97,12 @@ class DottedDict(dict):
         '''
         for key, value in input_item.items():
             if isinstance(value, dict):
-                value = DottedDict(**{str(k): v for k, v in value.items()})
+                value = self.__class__(**{str(k): v for k, v in value.items()})
             if isinstance(value, list):
                 _list = []
                 for item in value:
                     if isinstance(item, dict):
-                        _list.append(DottedDict(item))
+                        _list.append(self.__class__(item))
                     else:
                         _list.append(item)
                 value = _list
