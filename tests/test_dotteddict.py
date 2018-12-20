@@ -106,3 +106,9 @@ class dotteddictTests(unittest.TestCase):
         self.assertEqual(type(dotted.f[0]), DottedDict)
         self.assertEqual(type(my_dict), dict)
         self.assertEqual(type(my_dict["f"][0]), dict)
+
+    def test_via_zip(self):
+        l = ["a", "b"]
+        dotted = DottedDict(zip(l, l))
+        self.assertEquals(dotted.a, "a")
+        self.assertEquals(dotted["b"], "b")
