@@ -4,9 +4,10 @@ import string
 
 
 class DottedDict(dict):
-    '''
+    """
     Override for the dict object to allow referencing of keys as attributes, i.e. dict.key
-    '''
+    """
+
     def __init__(self, *args, **kwargs):
         for arg in args:
             if isinstance(arg, dict):
@@ -14,6 +15,10 @@ class DottedDict(dict):
             if isinstance(arg, list):
                 for k, v in arg:
                     self.__setitem__(k, v)
+            else:
+                if hasattr(arg, "__iter__"):
+                    for k, v in list(arg):
+                        self.__setitem__(k, v)
 
         if kwargs:
             self._parse_input_(kwargs)
@@ -36,7 +41,7 @@ class DottedDict(dict):
         return self.__dict__[key]
 
     def __repr__(self):
-        '''
+        """
         Wrap the returned dict in DottedDict() on output.
         '''
         return '{0}({1})'.format(type(self).__name__, super(self.__class__, self).__repr__())
@@ -57,44 +62,44 @@ class DottedDict(dict):
         self.__dict__.update({key: value})
 
     def _is_valid_identifier_(self, identifier):
-        '''
+        """
         Test the key name for valid identifier status as considered by the python lexer. Also
         check that the key name is not a python keyword.
         https://stackoverflow.com/questions/12700893/how-to-check-if-a-string-is-a-valid-python-identifier-including-keyword-check
-        '''
-        if re.match('[a-zA-Z_][a-zA-Z0-9_]*$', str(identifier)):
+        """
+        if re.match("[a-zA-Z_][a-zA-Z0-9_]*$", str(identifier)):
             if not keyword.iskeyword(identifier):
                 return True
         raise ValueError('Key "{0}" is not a valid identifier.'.format(identifier))
 
     def _make_safe_(self, key):
-        '''
+        """
         Replace the space characters on the key with _ to make valid attrs.
-        '''
+        """
         key = str(key)
-        allowed = string.ascii_letters + string.digits + '_'
+        allowed = string.ascii_letters + string.digits + "_"
         # Replace spaces with _
-        if ' ' in key:
-            key = key.replace(' ', '_')
+        if " " in key:
+            key = key.replace(" ", "_")
         # Find invalid characters for use of key as attr
         diff = set(key).difference(set(allowed))
         # Replace invalid characters with _
         if diff:
             for char in diff:
-                key = key.replace(char, '_')
+                key = key.replace(char, "_")
         # Add _ if key begins with int
         try:
             int(key[0])
         except ValueError:
             pass
         else:
-            key = '_{0}'.format(key)
+            key = "_{0}".format(key)
         return key
 
     def _parse_input_(self, input_item):
-        '''
+        """
         Parse the input item if dict into the dotted_dict constructor.
-        '''
+        """
         for key, value in input_item.items():
             if isinstance(value, dict):
                 value = self.__class__(**{str(k): v for k, v in value.items()})
@@ -109,25 +114,25 @@ class DottedDict(dict):
             self.__setitem__(key, value)
 
     def copy(self):
-        '''
+        """
         Ensure copy object is DottedDict, not dict.
-        '''
+        """
         return type(self)(self)
 
     def to_dict(self):
-        '''
+        """
         Recursive conversion back to dict.
-        '''
+        """
         out = dict(self)
         for key, value in out.items():
             if value is self:
                 out[key] = out
-            elif hasattr(value, 'to_dict'):
+            elif hasattr(value, "to_dict"):
                 out[key] = value.to_dict()
             elif isinstance(value, list):
                 _list = []
                 for item in value:
-                    if hasattr(item, 'to_dict'):
+                    if hasattr(item, "to_dict"):
                         _list.append(item.to_dict())
                     else:
                         _list.append(item)
