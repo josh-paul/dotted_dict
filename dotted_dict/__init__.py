@@ -8,7 +8,17 @@ class DottedDict(dict):
     Override for the dict object to allow referencing of keys as attributes, i.e. dict.key
     """
 
+    def __new__(cls, *args, **kwargs):
+        """
+        Due to the way pickling works in python 3, we need to make sure
+        the box config is created as early as possible.
+        """
+        obj = super(DottedDict, cls).__new__(cls, *args, **kwargs)
+        obj._config = _get_config(cls, kwargs)
+        return obj
+
     def __init__(self, *args, **kwargs):
+        self._config = _get_config(self.__class__, kwargs)
         for arg in args:
             if isinstance(arg, dict):
                 self._parse_input_(arg)
@@ -51,14 +61,22 @@ class DottedDict(dict):
 
     def __setitem__(self, key, value):
         try:
-            self._is_valid_identifier_(key)
-        except ValueError:
-            if not keyword.iskeyword(key):
-                key = self._make_safe_(key)
+            if self._config["auto_correct"] == True:
+                try:
+                    self._is_valid_identifier_(key)
+                except ValueError:
+                    if not keyword.iskeyword(key):
+                        key = self._make_safe_(key)
+                    else:
+                        raise ValueError('Key "{0}" is a reserved keyword.'.format(key))
+                super(DottedDict, self).__setitem__(key, value)
+                self.__dict__.update({key: value})
             else:
-                raise ValueError('Key "{0}" is a reserved keyword.'.format(key))
-        super(DottedDict, self).__setitem__(key, value)
-        self.__dict__.update({key: value})
+                super(DottedDict, self).__setitem__(key, value)
+                self.__dict__.update({key: value})
+        except AttributeError:
+            super(DottedDict, self).__setitem__(key, value)
+            self.__dict__.update({key: value})
 
     def _is_valid_identifier_(self, identifier):
         """
@@ -137,3 +155,10 @@ class DottedDict(dict):
                         _list.append(item)
                 out[key] = _list
         return out
+
+
+def _get_config(cls, kwargs):
+    """
+    Process init args for DottedDict.
+    """
+    return {"auto_correct": kwargs.pop("auto_correct", True)}
