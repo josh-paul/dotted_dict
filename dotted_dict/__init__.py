@@ -43,7 +43,7 @@ class DottedDict(dict):
     def __repr__(self):
         """
         Wrap the returned dict in DottedDict() on output.
-        '''
+        """
         return '{0}({1})'.format(type(self).__name__, super(self.__class__, self).__repr__())
 
     def __setattr__(self, key, value):
