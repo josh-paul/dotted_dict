@@ -10,14 +10,14 @@ class dotteddictTests(unittest.TestCase):
     def test_child_dictionary_types(self):
         dotted = PreserveKeysDottedDict({'x': {'y': {'z': 5}}})
 
-        self.assertEqual(type(dotted.x), DottedDict)
-        self.assertEqual(type(dotted.x.y), DottedDict)
+        self.assertEqual(type(dotted.x), PreserveKeysDottedDict)
+        self.assertEqual(type(dotted.x.y), PreserveKeysDottedDict)
 
     def test_child_dictionary_types_accessor(self):
         dotted = PreserveKeysDottedDict({'x': {'y': {'z': 5}}})
 
-        self.assertEqual(type(dotted['x']), DottedDict)
-        self.assertEqual(type(dotted['x']['y']), DottedDict)
+        self.assertEqual(type(dotted['x']), PreserveKeysDottedDict)
+        self.assertEqual(type(dotted['x']['y']), PreserveKeysDottedDict)
 
     def test_children_equivalence(self):
         dotted = PreserveKeysDottedDict({'x': {'y': {'z': 5}}})
@@ -27,7 +27,7 @@ class dotteddictTests(unittest.TestCase):
 
     def test_construction_without_data(self):
         dotted = PreserveKeysDottedDict()
-        self.assertTrue(isinstance(dotted, DottedDict))
+        self.assertTrue(isinstance(dotted, PreserveKeysDottedDict))
 
     def test_copy(self):
         my_dict = PreserveKeysDottedDict({'my key two': {'b': 'c', 1: 2}})
@@ -103,7 +103,7 @@ class dotteddictTests(unittest.TestCase):
         )
         my_dict = dotted.to_dict()
         self.assertEquals(dotted, my_dict)
-        self.assertEqual(type(dotted), DottedDict)
-        self.assertEqual(type(dotted.f[0]), DottedDict)
+        self.assertEqual(type(dotted), PreserveKeysDottedDict)
+        self.assertEqual(type(dotted.f[0]), PreserveKeysDottedDict)
         self.assertEqual(type(my_dict), dict)
         self.assertEqual(type(my_dict['f'][0]), dict)
