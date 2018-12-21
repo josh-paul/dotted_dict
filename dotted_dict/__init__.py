@@ -12,13 +12,12 @@ class DottedDict(dict):
         for arg in args:
             if isinstance(arg, dict):
                 self._parse_input_(arg)
-            if isinstance(arg, list):
+            elif isinstance(arg, list):
                 for k, v in arg:
                     self.__setitem__(k, v)
-            else:
-                if hasattr(arg, "__iter__"):
-                    for k, v in list(arg):
-                        self.__setitem__(k, v)
+            elif hasattr(arg, "__iter__"):
+                for k, v in list(arg):
+                    self.__setitem__(k, v)
 
         if kwargs:
             self._parse_input_(kwargs)
