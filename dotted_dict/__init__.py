@@ -61,11 +61,12 @@ class DottedDict(dict):
         self.__dict__.update({key: value})
 
     def _is_valid_identifier_(self, identifier):
-        """
-        Test the key name for valid identifier status as considered by the python lexer. Also
-        check that the key name is not a python keyword.
-        https://stackoverflow.com/questions/12700893/how-to-check-if-a-string-is-a-valid-python-identifier-including-keyword-check # noqa
-        """
+        """ Determine if key is valid. """
+        # """
+        # Test the key name for valid identifier status as considered by the python lexer. Also
+        # check that the key name is not a python keyword.
+        # https://stackoverflow.com/questions/12700893/how-to-check-if-a-string-is-a-valid-python-identifier-including-keyword-check # noqa
+        # """
         if re.match("[a-zA-Z_][a-zA-Z0-9_]*$", str(identifier)):
             if not keyword.iskeyword(identifier):
                 return True
