@@ -1,4 +1,3 @@
-# flake8: noqa
 import keyword
 import re
 import string
@@ -44,7 +43,7 @@ class DottedDict(dict):
         """
         Wrap the returned dict in DottedDict() on output.
         """
-        return '{0}({1})'.format(type(self).__name__, super(DottedDict, self).__repr__())
+        return "{0}({1})".format(type(self).__name__, super(DottedDict, self).__repr__())
 
     def __setattr__(self, key, value):
         # No need to run _is_valid_identifier since a syntax error is raised if invalid attr name
@@ -62,12 +61,11 @@ class DottedDict(dict):
         self.__dict__.update({key: value})
 
     def _is_valid_identifier_(self, identifier):
-        """ Determine if key is valid. """
-        # """
-        # Test the key name for valid identifier status as considered by the python lexer. Also
-        # check that the key name is not a python keyword.
-        # https://stackoverflow.com/questions/12700893/how-to-check-if-a-string-is-a-valid-python-identifier-including-keyword-check # noqa
-        # """
+        """
+        Test the key name for valid identifier status as considered by the python lexer. Also
+        check that the key name is not a python keyword.
+        https://stackoverflow.com/questions/12700893/how-to-check-if-a-string-is-a-valid-python-identifier-including-keyword-check
+        """
         if re.match("[a-zA-Z_][a-zA-Z0-9_]*$", str(identifier)):
             if not keyword.iskeyword(identifier):
                 return True
@@ -103,12 +101,12 @@ class DottedDict(dict):
         """
         for key, value in input_item.items():
             if isinstance(value, dict):
-                value = self.__class__(**{str(k): v for k, v in value.items()})
+                value = DottedDict(**{str(k): v for k, v in value.items()})
             if isinstance(value, list):
                 _list = []
                 for item in value:
                     if isinstance(item, dict):
-                        _list.append(self.__class__(item))
+                        _list.append(DottedDict(item))
                     else:
                         _list.append(item)
                 value = _list
@@ -143,12 +141,11 @@ class DottedDict(dict):
 
 class PreserveKeysDottedDict(DottedDict):
     """
-    Override for the dict object to allow referencing of keys as attributes, i.e. dict.key
+    Overrides auto correction of key names to safe attr names.  Can result in errors when using
+    attr name resolution.
     """
 
     def __init__(self, *args, **kwargs):
-        super(PreserveKeysDottedDict, self).__init__()
-        
         for arg in args:
             if isinstance(arg, dict):
                 self._parse_input_(arg)
@@ -183,50 +180,16 @@ class PreserveKeysDottedDict(DottedDict):
         """
         Wrap the returned dict in DottedDict() on output.
         """
-        return '{0}({1})'.format(type(self).__name__, super(PreserveKeysDottedDict, self).__repr__())
+        return "{0}({1})".format(
+            type(self).__name__, super(PreserveKeysDottedDict, self).__repr__()
+        )
 
     def __setattr__(self, key, value):
-        # No need to run _is_valid_identifier since a syntax error is raised if invalid attr name
         self.__setitem__(key, value)
 
     def __setitem__(self, key, value):
-        try:
-            self._is_valid_identifier_(key)
-        except ValueError:
-            if not keyword.iskeyword(key):
-                key = self._make_safe_(key)
-            else:
-                raise ValueError('Key "{0}" is a reserved keyword.'.format(key))
         super(PreserveKeysDottedDict, self).__setitem__(key, value)
         self.__dict__.update({key: value})
-
-    def _is_valid_identifier_(self, identifier):
-        """ Determine if key is a valid identifier. """
-        return True
-
-    def _make_safe_(self, key):
-        """
-        Replace the space characters on the key with _ to make valid attrs.
-        """
-        key = str(key)
-        allowed = string.ascii_letters + string.digits + "_"
-        # Replace spaces with _
-        if " " in key:
-            key = key.replace(" ", "_")
-        # Find invalid characters for use of key as attr
-        diff = set(key).difference(set(allowed))
-        # Replace invalid characters with _
-        if diff:
-            for char in diff:
-                key = key.replace(char, "_")
-        # Add _ if key begins with int
-        try:
-            int(key[0])
-        except ValueError:
-            pass
-        else:
-            key = "_{0}".format(key)
-        return key
 
     def _parse_input_(self, input_item):
         """
