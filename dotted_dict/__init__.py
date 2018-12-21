@@ -147,6 +147,8 @@ class PreserveKeysDottedDict(DottedDict):
     """
 
     def __init__(self, *args, **kwargs):
+        super(DottedDict, self).__init__()
+        
         for arg in args:
             if isinstance(arg, dict):
                 self._parse_input_(arg)
