@@ -147,7 +147,7 @@ class PreserveKeysDottedDict(DottedDict):
     """
 
     def __init__(self, *args, **kwargs):
-        super(DottedDict, self).__init__()
+        super(PreserveKeysDottedDict, self).__init__()
         
         for arg in args:
             if isinstance(arg, dict):
