@@ -175,14 +175,12 @@ class dotteddictTests(unittest.TestCase):
         self.assertTrue(dotted.foo is value)
 
     def test_pkdd_not_valid_identifier(self):
-        dotted = PreserveKeysDottedDict({"foo-bar": 1, ".foo": 1, "foo baz": 1, 1: 2})
+        dotted = PreserveKeysDottedDict({"lambda": 1, "foo-bar": 1, ".foo": 1, "foo baz": 1, 1: 2})
+        self.assertTrue(dotted["lambda"], 1)
         self.assertTrue(dotted["foo-bar"], 1)
         self.assertTrue(dotted[".foo"], 1)
         self.assertTrue(dotted["foo baz"], 1)
         self.assertTrue(dotted[1], 2)
-        # Reserved keyword
-        with self.assertRaises(ValueError):
-            PreserveKeysDottedDict({"lambda": 1})
 
     def test_pkdd_repr(self):
         dotted = PreserveKeysDottedDict({"foo-bar": 1, ".foo": 1, "foo baz": 1, 1: 2})

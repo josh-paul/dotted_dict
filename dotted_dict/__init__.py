@@ -188,8 +188,6 @@ class PreserveKeysDottedDict(dict):
         self.__setitem__(key, value)
 
     def __setitem__(self, key, value):
-        if keyword.iskeyword(key):
-            raise ValueError('Key "{0}" is a reserved keyword.'.format(key))
         super(PreserveKeysDottedDict, self).__setitem__(key, value)
         self.__dict__.update({key: value})
 
