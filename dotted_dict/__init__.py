@@ -118,6 +118,23 @@ class DottedDict(dict):
         """
         return type(self)(self)
 
+    def update(self, *args, **kwargs):
+        """
+        Override dict standard update method.
+        """
+        for arg in args:
+            if isinstance(arg, dict):
+                self._parse_input_(arg)
+            elif isinstance(arg, list):
+                for k, v in arg:
+                    self.__setitem__(k, v)
+            elif hasattr(arg, "__iter__"):
+                for k, v in list(arg):
+                    self.__setitem__(k, v)
+
+        if kwargs:
+            self._parse_input_(kwargs)
+
     def to_dict(self):
         """
         Recursive conversion back to dict.
@@ -213,6 +230,23 @@ class PreserveKeysDottedDict(dict):
         Ensure copy object is DottedDict, not dict.
         """
         return type(self)(self)
+
+    def update(self, *args, **kwargs):
+        """
+        Override dict standard update method.
+        """
+        for arg in args:
+            if isinstance(arg, dict):
+                self._parse_input_(arg)
+            elif isinstance(arg, list):
+                for k, v in arg:
+                    self.__setitem__(k, v)
+            elif hasattr(arg, "__iter__"):
+                for k, v in list(arg):
+                    self.__setitem__(k, v)
+
+        if kwargs:
+            self._parse_input_(kwargs)
 
     def to_dict(self):
         """

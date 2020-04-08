@@ -98,6 +98,15 @@ class dotteddictTests(unittest.TestCase):
         self.assertEqual(dotted.x, value)
         self.assertEqual(dotted.x, dotted[key])
 
+    def test_update(self):
+        dotted = DottedDict(DottedDict({"a": "b", "c": {"d": "e"}, "f": [{"g": "h"}, 1]}))
+        dotted.update({"a": "z"})
+        self.assertEquals(dotted.a, "z")
+
+        dotted.update([("c", "v"), ("x", "y")])
+        self.assertEquals(dotted.c, "v")
+        self.assertEquals(dotted.x, "y")
+
     def test_to_dict(self):
         dotted = DottedDict(DottedDict({"a": "b", "c": {"d": "e"}, "f": [{"g": "h"}, 1]}))
         my_dict = dotted.to_dict()
@@ -201,6 +210,15 @@ class dotteddictTests(unittest.TestCase):
         self.assertEqual(dotted[key], value)
         self.assertEqual(dotted.x, value)
         self.assertEqual(dotted.x, dotted[key])
+
+    def test_pkdd_update(self):
+        dotted = DottedDict(DottedDict({"a": "b", "c": {"d": "e"}, "f": [{"g": "h"}, 1]}))
+        dotted.update({"a": "z"})
+        self.assertEquals(dotted.a, "z")
+
+        dotted.update([("c", "v"), ("x", "y")])
+        self.assertEquals(dotted.c, "v")
+        self.assertEquals(dotted.x, "y")
 
     def test_pkdd_to_dict(self):
         dotted = PreserveKeysDottedDict(
