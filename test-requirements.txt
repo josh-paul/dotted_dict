@@ -1,4 +1,0 @@
-coverage
-flake8
-pytest==3.2.5
-tox

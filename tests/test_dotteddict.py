@@ -33,7 +33,7 @@ class dotteddictTests(unittest.TestCase):
     def test_copy(self):
         my_dict = DottedDict({"my key two": {"b": "c", 1: 2}})
         dotted = my_dict.copy()
-        self.assertEquals(my_dict, dotted)
+        self.assertEqual(my_dict, dotted)
 
     def test_delete(self):
         dotted = DottedDict({"foo": 1})
@@ -53,9 +53,9 @@ class dotteddictTests(unittest.TestCase):
         items = [("x", 1), ("y", 2), ("z", 3)]
         dotted = DottedDict(items)
 
-        self.assertEquals(dotted.x, 1)
-        self.assertEquals(dotted.y, 2)
-        self.assertEquals(dotted.z, 3)
+        self.assertEqual(dotted.x, 1)
+        self.assertEqual(dotted.y, 2)
+        self.assertEqual(dotted.z, 3)
 
     def test_missing_attribute_error(self):
         dotted = DottedDict({"foo": None})
@@ -101,16 +101,16 @@ class dotteddictTests(unittest.TestCase):
     def test_update(self):
         dotted = DottedDict(DottedDict({"a": "b", "c": {"d": "e"}, "f": [{"g": "h"}, 1]}))
         dotted.update({"a": "z"})
-        self.assertEquals(dotted.a, "z")
+        self.assertEqual(dotted.a, "z")
 
         dotted.update([("c", "v"), ("x", "y")])
-        self.assertEquals(dotted.c, "v")
-        self.assertEquals(dotted.x, "y")
+        self.assertEqual(dotted.c, "v")
+        self.assertEqual(dotted.x, "y")
 
     def test_to_dict(self):
         dotted = DottedDict(DottedDict({"a": "b", "c": {"d": "e"}, "f": [{"g": "h"}, 1]}))
         my_dict = dotted.to_dict()
-        self.assertEquals(dotted, my_dict)
+        self.assertEqual(dotted, my_dict)
         self.assertEqual(type(dotted), DottedDict)
         self.assertEqual(type(dotted.f[0]), DottedDict)
         self.assertEqual(type(my_dict), dict)
@@ -119,8 +119,8 @@ class dotteddictTests(unittest.TestCase):
     def test_via_zip(self):
         data = ["a", "b"]
         dotted = DottedDict(zip(data, data))
-        self.assertEquals(dotted.a, "a")
-        self.assertEquals(dotted["b"], "b")
+        self.assertEqual(dotted.a, "a")
+        self.assertEqual(dotted["b"], "b")
 
     # PreseveKeysDottedDict
     def test_pkdd_child_dictionary_types(self):
@@ -148,7 +148,7 @@ class dotteddictTests(unittest.TestCase):
     def test_pkdd_copy(self):
         my_dict = PreserveKeysDottedDict({"my key two": {"b": "c", 1: 2}})
         dotted = my_dict.copy()
-        self.assertEquals(my_dict, dotted)
+        self.assertEqual(my_dict, dotted)
 
     def test_pkdd_delete(self):
         dotted = PreserveKeysDottedDict({"foo": 1})
@@ -168,9 +168,9 @@ class dotteddictTests(unittest.TestCase):
         items = [("x", 1), ("y", 2), ("z", 3)]
         dotted = PreserveKeysDottedDict(items)
 
-        self.assertEquals(dotted.x, 1)
-        self.assertEquals(dotted.y, 2)
-        self.assertEquals(dotted.z, 3)
+        self.assertEqual(dotted.x, 1)
+        self.assertEqual(dotted.y, 2)
+        self.assertEqual(dotted.z, 3)
 
     def test_pkdd_missing_attribute_error(self):
         dotted = PreserveKeysDottedDict({"foo": None})
@@ -214,18 +214,18 @@ class dotteddictTests(unittest.TestCase):
     def test_pkdd_update(self):
         dotted = DottedDict(DottedDict({"a": "b", "c": {"d": "e"}, "f": [{"g": "h"}, 1]}))
         dotted.update({"a": "z"})
-        self.assertEquals(dotted.a, "z")
+        self.assertEqual(dotted.a, "z")
 
         dotted.update([("c", "v"), ("x", "y")])
-        self.assertEquals(dotted.c, "v")
-        self.assertEquals(dotted.x, "y")
+        self.assertEqual(dotted.c, "v")
+        self.assertEqual(dotted.x, "y")
 
     def test_pkdd_to_dict(self):
         dotted = PreserveKeysDottedDict(
             PreserveKeysDottedDict({"a": "b", "c": {"d": "e"}, "f": [{"g": "h"}, 1]})
         )
         my_dict = dotted.to_dict()
-        self.assertEquals(dotted, my_dict)
+        self.assertEqual(dotted, my_dict)
         self.assertEqual(type(dotted), PreserveKeysDottedDict)
         self.assertEqual(type(dotted.f[0]), PreserveKeysDottedDict)
         self.assertEqual(type(my_dict), dict)
@@ -234,9 +234,9 @@ class dotteddictTests(unittest.TestCase):
     def test_pkdd_via_zip(self):
         data = ["a", "b"]
         dotted = PreserveKeysDottedDict(zip(data, data))
-        self.assertEquals(dotted.a, "a")
-        self.assertEquals(dotted["b"], "b")
+        self.assertEqual(dotted.a, "a")
+        self.assertEqual(dotted["b"], "b")
 
     def test_preserve_keys(self):
         dotted = PreserveKeysDottedDict({"foo-bar": 1, ".foo": 1, "foo baz": 1, 1: 2})
-        self.assertEquals(dotted["foo baz"], 1)
+        self.assertEqual(dotted["foo baz"], 1)
