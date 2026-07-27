@@ -3,17 +3,28 @@ name: CI
 on:
   push:
     branches: [master, main]
+    tags: ["v*"]
   pull_request:
   workflow_dispatch:
 
+# Least privilege by default. The publish job raises what it needs and
+# nothing else does.
 permissions:
   contents: read
+
+# A second push supersedes the first. Cheap on a public repo where minutes are
+# free, but it keeps the run list readable and gets an answer sooner.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -30,13 +41,16 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
         include:
           # The library leans on CPython's attribute-lookup order, so it is
-          # worth confirming on more than one platform.
+          # worth confirming on more than one platform. One version each is
+          # enough; the version axis is covered on Linux.
           - os: macos-latest
             python-version: "3.13"
           - os: windows-latest
             python-version: "3.13"
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -50,6 +64,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -57,3 +73,36 @@ jobs:
       - run: python -m build
       - name: Check package metadata
         run: twine check dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  # Publishes on a version tag only, and only after everything else passes.
+  #
+  # Uses PyPI Trusted Publishing: GitHub mints a short-lived OIDC token and
+  # PyPI verifies it against a publisher you register there. No API token is
+  # stored in this repository, which is the point -- there is no long-lived
+  # credential to leak, rotate, or forget about.
+  #
+  # One-time setup on PyPI, under the project's Publishing settings:
+  #   owner:       josh-paul
+  #   repository:  dotted_dict
+  #   workflow:    ci.yml
+  #   environment: pypi
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [lint, test, build]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/dotted_dict/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
